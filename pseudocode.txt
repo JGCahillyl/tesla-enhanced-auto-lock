@@ -1,0 +1,67 @@
+// Variables
+int autoLockDelayMinutes = 5;  // Configurable delay (1-15 mins)
+boolean enhancedAutoLockEnabled = false;  // Feature toggle
+boolean lockWhenOccupied = false;  // Safety toggle
+boolean forceTimedLock = false;  // Override proximity
+boolean isVehicleLocked = false;  // Lock state
+int elapsedTimeMinutes = 0;  // Timer
+
+// Configure via touchscreen
+function configureEnhancedAutoLock() {
+    if (userTogglesEnhancedAutoLock()) {
+        enhancedAutoLockEnabled = true;
+        autoLockDelayMinutes = userInputDelay();  // Set delay
+        lockWhenOccupied = userTogglesLockWhenOccupied();  // Safety option
+        forceTimedLock = userTogglesForceLock();  // Proximity override
+        saveSettings(enhancedAutoLockEnabled, autoLockDelayMinutes, lockWhenOccupied, forceTimedLock);
+    } else {
+        enhancedAutoLockEnabled = false;
+        saveSettings(enhancedAutoLockEnabled, 0, false, false);
+    }
+}
+
+// Main Enhanced Auto-Lock logic
+function enhancedAutoLockRoutine() {
+    while (true) {
+        if (enhancedAutoLockEnabled && vehicleInPark() && allDoorsClosed()) {
+            boolean isOccupied = CabinSensor.detectPresence();
+
+            // Case 1: Lock when occupied (safety mode)
+            if (lockWhenOccupied && isOccupied && !isVehicleLocked) {
+                lockVehicle();
+                isVehicleLocked = true;
+                notifyUser("Car locked with occupant for safety");
+            }
+            // Case 2: Lock when unoccupied (reliable fallback)
+            else if (!isOccupied && (forceTimedLock || !phoneKeyInRange())) {
+                if (!isVehicleLocked) {
+                    elapsedTimeMinutes = trackTimeSinceDoorsClosed();
+                    if (elapsedTimeMinutes >= autoLockDelayMinutes) {
+                        lockVehicle();
+                        isVehicleLocked = true;
+                        notifyUser("Car locked via Enhanced Auto-Lock");
+                        elapsedTimeMinutes = 0;
+                    }
+                }
+            } else {
+                elapsedTimeMinutes = 0;  // Reset timer if conditions not met
+            }
+        }
+        delay(60000);  // Check every minute
+    }
+}
+
+// Helpers
+function lockVehicle() {
+    VehicleLockSystem.activate();
+    playLockSound();
+}
+
+function trackTimeSinceDoorsClosed() {
+    return SystemClock.getElapsedMinutesSince(allDoorsClosed());
+}
+
+function initialize() {
+    loadSettingsFromMemory();
+    startBackgroundThread(enhancedAutoLockRoutine);
+}
