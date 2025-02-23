@@ -23,7 +23,7 @@ See the detailed pseudocode in [enhanced_auto_lock_pseudocode.txt](https://githu
 
 ## Pitch to Elon
 This was pitched to @elonmusk on X with this message:
-> "Hey @elonmusk, can we get an "Enhanced Auto-Lock" for Tesla? Two tweaks to solve real owner headaches: (1) Enhance owner safety by providing option to lock when occupied (via cabin sensors). Eg, So my daughter’s safe when she's waiting to pick up a friend in a dark parking lot. Internal unlock still works; (2) Auto-lock after a set delay (e.g., 3 mins) when doors are closed & in Park. A reliable backup for Walk-Away Lock’s periodic glitches. --> Set delay & toggles in Controls > Locks. Pseudocode: https://raw.githubusercontent.com/JGCahillyI/tesla-enhanced-auto-lock/main/enhanced_auto_lock_pseudocode.txt Thoughts?"
+> "Hey @elonmusk how about "Enhanced Auto-Lock" for TSLA? (1) Auto-lock >3 mins when occupied so my daughter’s safe in a dark lot. (2) Auto-lock >3 mins when shut & parked, solving Walk-Away fails | Set in Controls | Also, Grok3 agrees | Pseudocode: bit.ly/GitHub-tesla-l… Thoughts?"
 
 ## Next Steps
 - Feedback welcome! Hoping Tesla considers this for a future update.
